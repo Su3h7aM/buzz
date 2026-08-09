@@ -635,12 +635,12 @@ export function ProjectDiffFilesPanel({
   return (
     <div
       className={cn(
-        "grid min-h-0 overflow-hidden lg:grid-cols-[17rem_minmax(0,1fr)]",
+        "grid min-w-0 overflow-hidden lg:grid-cols-[17rem_minmax(0,1fr)] lg:min-h-0 lg:flex-1",
         outerBorderClass,
       )}
       data-project-detail-panel={embedded ? undefined : true}
     >
-      <aside className="border-border/50 border-b bg-background/30 lg:border-r lg:border-b-0">
+      <aside className="flex min-w-0 flex-col border-border/50 border-b bg-background/30 lg:min-h-0 lg:border-r lg:border-b-0">
         <div className="space-y-3 p-3">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Files className="h-3.5 w-3.5" />
@@ -656,7 +656,10 @@ export function ProjectDiffFilesPanel({
             />
           </label>
         </div>
-        <nav className="max-h-96 overflow-auto border-border/50 border-t py-1">
+        <nav
+          className="min-h-0 flex-1 overflow-auto border-border/50 border-t py-1"
+          data-testid="project-diff-file-tree"
+        >
           <FileTreeItems
             node={fileTree}
             onSelect={setSelectedPath}
@@ -665,7 +668,7 @@ export function ProjectDiffFilesPanel({
         </nav>
       </aside>
 
-      <section className="min-w-0">
+      <section className="flex min-w-0 flex-col overflow-hidden lg:min-h-0">
         <div className="flex min-h-12 flex-wrap items-center justify-between gap-3 border-border/50 border-b bg-background/30 px-4 py-2 text-xs text-muted-foreground">
           <div className="flex min-w-0 items-center gap-2">
             <GitCommitHorizontal className="h-3.5 w-3.5" />
@@ -678,7 +681,10 @@ export function ProjectDiffFilesPanel({
           </div>
         </div>
 
-        <div className="p-3">
+        <div
+          className="overflow-auto p-3 lg:min-h-0 lg:flex-1"
+          data-testid="project-diff-scroll"
+        >
           {selectedFile ? (
             <article className="overflow-hidden border border-border/60 bg-background/45">
               <header className="flex min-h-10 items-center justify-between gap-3 border-border/50 border-b bg-muted/20 px-3 text-xs">
@@ -709,6 +715,7 @@ export function ProjectDiffFilesPanel({
               <div
                 data-line={displayedFocusedAnchor?.line}
                 data-path={displayedFocusedAnchor?.path}
+                data-selected-path={selectedFile.path}
                 data-side={displayedFocusedAnchor?.side}
                 data-testid="project-diff-renderer"
               >
