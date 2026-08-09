@@ -541,6 +541,7 @@ test("commit detail opens from the commits feed with a diff", async ({
   await expect(page.getByText("2 changed files")).toBeVisible({
     timeout: 10_000,
   });
+  await expect(page.getByTestId("project-diff-renderer")).toBeVisible();
   await expect(
     page.getByText("CommunityTabs({ selectedCommitHash })"),
   ).toBeVisible();

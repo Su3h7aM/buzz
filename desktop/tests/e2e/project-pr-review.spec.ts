@@ -541,12 +541,14 @@ test("reviewer can leave a commit-scoped inline diff comment", async ({
   await aliceRow.getByRole("button", { name: /^#/ }).click();
   await page.getByRole("tab", { name: /Files changed/ }).click();
 
-  const diffLine = page
-    .getByTestId("project-diff-line")
-    .filter({ hasText: "function CommunityTabs({ selectedCommitHash })" });
-  await expect(diffLine).toBeVisible({ timeout: 10_000 });
-  await diffLine.hover();
-  await diffLine.getByTestId("project-diff-add-comment").click();
+  const diffRenderer = page.getByTestId("project-diff-renderer");
+  await expect(diffRenderer).toBeVisible({ timeout: 10_000 });
+  const diffLineText = page.getByText(
+    "function CommunityTabs({ selectedCommitHash })",
+  );
+  await expect(diffLineText).toBeVisible();
+  await diffLineText.hover();
+  await diffRenderer.getByTestId("project-diff-add-comment").click();
 
   const composer = page.getByTestId("project-inline-comment-thread");
   await composer
@@ -608,7 +610,7 @@ test("reviewer can leave a commit-scoped inline diff comment", async ({
   await expect(
     page.getByRole("tab", { name: /Files changed/ }),
   ).toHaveAttribute("data-state", "active");
-  const focusedLine = page.getByTestId("project-diff-focused-line");
+  const focusedLine = page.getByTestId("project-diff-renderer");
   await expect(focusedLine).toBeVisible();
   await expect(focusedLine).toHaveAttribute(
     "data-path",
@@ -617,7 +619,14 @@ test("reviewer can leave a commit-scoped inline diff comment", async ({
   await expect(focusedLine).toHaveAttribute("data-side", "new");
   await expect(focusedLine).toHaveAttribute("data-line", "3");
   await focusedLine.click();
-  await expect(page.getByTestId("project-diff-focused-line")).toHaveCount(0);
+  await expect(focusedLine).toBeVisible();
+  await expect
+    .poll(async () => ({
+      path: await focusedLine.getAttribute("data-path"),
+      side: await focusedLine.getAttribute("data-side"),
+      line: await focusedLine.getAttribute("data-line"),
+    }))
+    .toEqual({ path: null, side: null, line: null });
 });
 
 test("managed agent repository owner can merge", async ({ page }) => {
